@@ -1,27 +1,26 @@
-import { FC } from "react";
-import { ReactNode } from "react";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import React, { FC, ReactNode } from 'react'
 
-const inter = Inter({ subsets: ["latin"] });
+import '~/styles/globals.css'
 
-import "~/styles/globals.css";
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "Meme me",
-  description: "Social media website for intertainment",
-};
+  title: 'Meme me',
+  description: 'Social media website for entertainment'
+}
 
 type RootLayoutProps = {
-  children: ReactNode;
-};
+  children: ReactNode
+}
 
 const RootLayout: FC<RootLayoutProps> = ({ children }): JSX.Element => {
   return (
     <html lang="en">
       <body className={inter.className}>{children}</body>
     </html>
-  );
-};
+  )
+}
 
-export default RootLayout;
+export default RootLayout
