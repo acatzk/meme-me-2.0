@@ -5,6 +5,7 @@ import { Metadata } from 'next'
 
 import { TodoList } from './_components/getTodos'
 import { serverClient } from '../_trpc/server-client'
+import { CreateUser } from './_components/createUser'
 
 export const metadata: Metadata = {
   title: 'Authentication',
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 
 const LandingPage = async (): Promise<JSX.Element> => {
   const todos = await serverClient.getTodos()
+  const users = await serverClient.getUser()
 
   return (
     <>
@@ -65,9 +67,11 @@ const LandingPage = async (): Promise<JSX.Element> => {
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
               <p className="text-sm text-muted-foreground">
-                Enter your email below to create your account
+                Enter your email below to create your account well done
               </p>
               <TodoList initialData={todos} />
+              <pre>{JSON.stringify(users, null, 2)}</pre>
+              <CreateUser />
             </div>
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{' '}
