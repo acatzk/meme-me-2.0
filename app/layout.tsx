@@ -10,7 +10,15 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Meme me',
-  description: 'Social media website for entertainment'
+  description: 'Social media website for entertainment',
+  icons: {
+    icon: [
+      {
+        url: '/logo.ico',
+        href: '/logo.ico'
+      }
+    ]
+  }
 }
 
 type RootLayoutProps = {
@@ -19,7 +27,7 @@ type RootLayoutProps = {
 
 const RootLayout: FC<RootLayoutProps> = ({ children }): JSX.Element => {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Provider>
           <Toaster />
