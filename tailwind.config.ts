@@ -84,7 +84,7 @@ module.exports = {
       xl: '1170px'
     },
     colors: {
-      primary: {
+      core: {
         DEFAULT: '#a874fe',
         100: '#e6d7ff',
         200: '#c39fff',

@@ -17,12 +17,12 @@ const LandingLayout: FC<Props> = ({ children }): JSX.Element => {
   return (
     <main className="flex h-screen min-h-screen overflow-hidden">
       {!isMobile && (
-        <section className="bg-primary-hover flex h-full flex-1 items-center justify-center">
+        <section className="bg-core-hover flex h-full flex-1 items-center justify-center">
           <div className="w-full max-w-md select-none space-y-6">
             <CarouselSlider />
             <div className="space-y-1.5 text-center">
               <h1 className="text-xl font-semibold text-white">Connect with every application</h1>
-              <p className="text-primary-100 text-xs">
+              <p className="text-core-100 text-xs">
                 be part of the community where laughter should be sharable
               </p>
             </div>
@@ -39,9 +39,7 @@ const LandingLayout: FC<Props> = ({ children }): JSX.Element => {
                 <h2 className="text-2xl font-bold text-secondary-foreground">
                   Log in to your Account
                 </h2>
-                <p className="text-secondary-200 text-sm font-medium">
-                  Welcome back! Select method to log in:
-                </p>
+                <p className="text-sm font-medium text-secondary-200">Welcome back!</p>
               </div>
             </div>
 

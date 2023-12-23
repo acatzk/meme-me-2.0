@@ -12,9 +12,21 @@ const buttonVariants = cva(
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline'
+        link: 'text-primary underline-offset-4 hover:underline',
+        primary: cn(
+          'text-white bg-core hover:bg-core-hover',
+          'focus:ring-4 focus:ring-core-100 font-medium'
+        ),
+        'primary-outline': cn(
+          'text-core bg-background hover:bg-core-100/20',
+          'focus:ring-4 focus:ring-core-100 font-semibold border border-core-200'
+        ),
+        secondary: cn(),
+        'secondary-outline': cn(
+          'text-secondary border stroke-1 bg-transparent focus:ring-4 focus:ring-core-100',
+          'focus:border focus:border-secondary-100'
+        )
       },
       size: {
         default: 'h-10 px-4 py-2',

@@ -2,9 +2,10 @@ import { Toaster } from 'sonner'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import React, { FC, ReactNode } from 'react'
+import { ClerkProvider } from '@clerk/nextjs'
 
 import '~/styles/globals.css'
-import { Provider } from './_trpc/provider'
+import { TRPCProvider } from '~/components/providers/trpc-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,14 +28,16 @@ type RootLayoutProps = {
 
 const RootLayout: FC<RootLayoutProps> = ({ children }): JSX.Element => {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <Provider>
-          <Toaster />
-          {children}
-        </Provider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body className={inter.className}>
+          <TRPCProvider>
+            <Toaster />
+            {children}
+          </TRPCProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }
 

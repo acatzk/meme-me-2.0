@@ -17,7 +17,8 @@ module.exports = {
     'no-duplicate-imports': 'error',
     '@typescript-eslint/consistent-type-imports': 'off',
     '@typescript-eslint/consistent-type-definitions': 'off',
-    'react/prop-types': 'off'
+    'react/prop-types': 'off',
+    '@typescript-eslint/no-confusing-void-expression': 'off'
   },
   settings: {
     react: {
