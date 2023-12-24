@@ -23,7 +23,11 @@ const LandingPage = (): JSX.Element => {
         </SignInButton>
       )}
       {isSignedInUser && (
-        <Button onClick={() => router.push('/home')} variant="primary" className="relative w-full">
+        <Button
+          onClick={() => router.push('/home')}
+          variant="primary-outline"
+          className="relative w-full"
+        >
           <ArrowRight className="absolute left-4 mr-2 h-4 w-4" />
           Enter Meme me
         </Button>

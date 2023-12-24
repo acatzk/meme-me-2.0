@@ -1,35 +1,16 @@
-import { publicProcedure, router } from './trpc'
+// import { z } from 'zod'
+// import { PrismaClient } from '@prisma/client'
 
-import { PrismaClient } from '@prisma/client'
-import { z } from 'zod'
+import { protectedProcedure, router } from './trpc'
 
-const prisma = new PrismaClient()
+// const prisma = new PrismaClient()
 
 export const appRouter = router({
-  getTodos: publicProcedure.query(async () => {
-    return [10, 20, 30]
-  }),
-
-  getUser: publicProcedure.query(async () => {
-    return await prisma.user.findMany()
-  }),
-
-  createUser: publicProcedure
-    .input(
-      z.object({
-        name: z.string(),
-        email: z.string()
-      })
-    )
-    .mutation(async (opts) => {
-      const { input } = opts
-      return await prisma.user.create({
-        data: {
-          name: input.name,
-          email: input.email
-        }
-      })
-    })
+  hello: protectedProcedure.query(({ ctx }) => {
+    return {
+      secret: `${ctx.auth?.userId} is using a protected procedure`
+    }
+  })
 })
 
 // Export type router type signature,

@@ -1,8 +1,15 @@
-import React from 'react'
-import { NextPage } from 'next'
+'use client'
 
-const Home: NextPage = (): JSX.Element => {
-  return <div>Home</div>
+import React from 'react'
+
+import { AuthenComponents } from './../../_components/authenticationComponent'
+
+const Home = (): JSX.Element => {
+  return (
+    <div>
+      <AuthenComponents />
+    </div>
+  )
 }
 
 export default Home
