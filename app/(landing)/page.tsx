@@ -3,13 +3,13 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowRight, LogIn } from 'lucide-react'
-import { SignInButton, useAuth } from '@clerk/clerk-react'
+import { SignInButton, useUser } from '@clerk/clerk-react'
 
 import { Button } from '~/components/ui/button'
 
-const LandingPage = (): JSX.Element => {
+const LandingPage = (): JSX.Element | null => {
   const router = useRouter()
-  const { isSignedIn } = useAuth()
+  const { isSignedIn } = useUser()
   const isSignedInUser = isSignedIn !== undefined && isSignedIn
 
   return (

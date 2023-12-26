@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import { useMediaQuery } from 'usehooks-ts'
 import React, { FC, ReactNode } from 'react'
 
@@ -14,7 +14,7 @@ type Props = {
 
 const LandingLayout: FC<Props> = ({ children }): JSX.Element => {
   const isMobile = useMediaQuery('(max-width: 768px)')
-  const { isSignedIn } = useAuth()
+  const { isSignedIn } = useUser()
   const isAuthenticated = isSignedIn !== undefined && isSignedIn
 
   return (
