@@ -1,8 +1,8 @@
 'use client'
 
 import { useUser } from '@clerk/nextjs'
+import React, { ReactNode } from 'react'
 import { useMediaQuery } from 'usehooks-ts'
-import React, { FC, ReactNode } from 'react'
 
 import { LogoWitTitle } from '~/components/custom-icon/logo-with-title'
 
@@ -12,7 +12,7 @@ type Props = {
   children: ReactNode
 }
 
-const LandingLayout: FC<Props> = ({ children }): JSX.Element => {
+export default function LandingLayout({ children }: Props): JSX.Element {
   const isMobile = useMediaQuery('(max-width: 768px)')
   const { isSignedIn } = useUser()
   const isAuthenticated = isSignedIn !== undefined && isSignedIn
@@ -54,5 +54,3 @@ const LandingLayout: FC<Props> = ({ children }): JSX.Element => {
     </main>
   )
 }
-
-export default LandingLayout

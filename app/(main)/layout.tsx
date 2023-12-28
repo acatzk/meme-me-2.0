@@ -7,7 +7,7 @@ type Props = {
   children: ReactNode
 }
 
-const MainLayout = ({ children }: Props): JSX.Element => {
+export default function MainLayout({ children }: Props): JSX.Element {
   const { userId }: { userId: string | null } = auth()
 
   if (isEmpty(userId)) {
@@ -16,5 +16,3 @@ const MainLayout = ({ children }: Props): JSX.Element => {
 
   return <div>{children}</div>
 }
-
-export default MainLayout

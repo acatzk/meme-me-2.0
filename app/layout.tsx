@@ -1,7 +1,7 @@
 import { Toaster } from 'sonner'
 import type { Metadata } from 'next'
+import React, { ReactNode } from 'react'
 import { Inter } from 'next/font/google'
-import React, { FC, ReactNode } from 'react'
 import { ClerkProvider } from '@clerk/nextjs'
 
 import '~/styles/globals.css'
@@ -26,7 +26,7 @@ type RootLayoutProps = {
   children: ReactNode
 }
 
-const RootLayout: FC<RootLayoutProps> = ({ children }): JSX.Element => {
+export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
@@ -40,5 +40,3 @@ const RootLayout: FC<RootLayoutProps> = ({ children }): JSX.Element => {
     </ClerkProvider>
   )
 }
-
-export default RootLayout

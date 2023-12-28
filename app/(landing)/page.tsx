@@ -7,7 +7,7 @@ import { SignInButton, useUser } from '@clerk/clerk-react'
 
 import { Button } from '~/components/ui/button'
 
-const LandingPage = (): JSX.Element | null => {
+export default function LandingPage(): JSX.Element | null {
   const router = useRouter()
   const { isSignedIn } = useUser()
   const isSignedInUser = isSignedIn !== undefined && isSignedIn
@@ -36,5 +36,3 @@ const LandingPage = (): JSX.Element | null => {
     </div>
   )
 }
-
-export default LandingPage
