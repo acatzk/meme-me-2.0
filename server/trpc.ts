@@ -85,8 +85,6 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   return next({ ctx: ctx })
 })
 
-export const router = t.router
-
 /**
  * Protected (authenticated) procedure
  *

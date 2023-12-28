@@ -1,7 +1,7 @@
-import { router } from './trpc'
+import { createTRPCRouter } from './trpc'
 import { exampleRouter } from './routers/exampleRouter'
 
-export const appRouter = router({
+export const appRouter = createTRPCRouter({
   example: exampleRouter
 })
 

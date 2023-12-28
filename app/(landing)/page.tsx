@@ -22,6 +22,7 @@ const LandingPage = (): JSX.Element | null => {
           </Button>
         </SignInButton>
       )}
+
       {isSignedInUser && (
         <Button
           onClick={() => router.push('/home')}
