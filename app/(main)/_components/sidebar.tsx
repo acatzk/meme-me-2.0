@@ -13,6 +13,7 @@ import { sidebarMenus } from '~/constant/sidebarMenus'
 import { LogoWitTitle } from '~/components/custom-icon/logo-with-title'
 
 import { Item } from './item'
+import { UserCollapse } from './user-collapse'
 
 export const Sidebar = (): JSX.Element => {
   const router = useRouter()
@@ -137,6 +138,7 @@ export const Sidebar = (): JSX.Element => {
               })}
               <Item onClick={() => {}} label="Settings" icon={SettingOne} />
             </ul>
+            <UserCollapse />
           </nav>
         </main>
         {/* Dragrable sizebar */}
