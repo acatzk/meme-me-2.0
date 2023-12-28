@@ -38,10 +38,10 @@ module.exports = {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))'
         },
-        // secondary: {
-        //   DEFAULT: 'hsl(var(--secondary))',
-        //   foreground: 'hsl(var(--secondary-foreground))'
-        // },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))'
+        },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))'
@@ -68,7 +68,7 @@ module.exports = {
           200: '#c39fff',
           hover: '#9a5cff'
         },
-        secondary: {
+        'core-secondary': {
           DEFAULT: '#25396f',
           100: '#a4b6e1',
           200: '#8da4db',

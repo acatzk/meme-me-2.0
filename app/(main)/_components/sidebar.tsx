@@ -1,14 +1,21 @@
 'use client'
 
+import Link from 'next/link'
 import { isEmpty } from 'lodash'
 import { useMediaQuery } from 'usehooks-ts'
-import { usePathname } from 'next/navigation'
+import { SettingOne } from '@icon-park/react'
 import { ChevronsLeft, MenuIcon } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
 import React, { ElementRef, MouseEvent, useEffect, useRef, useState } from 'react'
 
 import { cn } from '~/lib/utils'
+import { sidebarMenus } from '~/constant/sidebarMenus'
+import { LogoWitTitle } from '~/components/custom-icon/logo-with-title'
 
-const Navigation = (): JSX.Element => {
+import { Item } from './item'
+
+export const Sidebar = (): JSX.Element => {
+  const router = useRouter()
   const pathname = usePathname()
   const isMobile = useMediaQuery('(max-width: 768px)')
 
@@ -103,23 +110,41 @@ const Navigation = (): JSX.Element => {
           onClick={collapse}
           className={cn(
             'hover:bg-neutral-300 dark:hover:bg-neutral-600 h-6 w-6 rounded-sm text-muted-foreground',
-            'absolute right-2 top-3 opacity-0 transition group-hover/sidebar:opacity-100',
+            'absolute right-2 top-3 z-[99999] opacity-0 transition group-hover/sidebar:opacity-100',
             isMobile && 'opacity-100'
           )}
         >
           <ChevronsLeft className="h-6 w-6" />
         </div>
-        <div>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias nisi accusamus maxime
-          voluptatibus, dolores, voluptatum cum aut nobis animi praesentium exercitationem eius?
-          Aliquam aperiam placeat dicta necessitatibus molestias fugiat nihil.s
-        </div>
+        {/* Main Sidebar content */}
+        <main>
+          <Link href="/home" className="outline-core">
+            <LogoWitTitle className="scale-90" />
+          </Link>
+          <nav>
+            <h4 className="text-core-secondary mt-8 px-6 font-extrabold">Menu</h4>
+            <ul className="mt-8 flex flex-col space-y-3 px-3">
+              {sidebarMenus.map((item, index) => {
+                return (
+                  <Item
+                    key={index}
+                    onClick={() => router.push(item.href)}
+                    label={item.name}
+                    icon={item.Icon}
+                    href={item.href}
+                  />
+                )
+              })}
+              <Item onClick={() => {}} label="Settings" icon={SettingOne} />
+            </ul>
+          </nav>
+        </main>
         {/* Dragrable sizebar */}
         <div
           role="button"
           onMouseDown={handleMouseDown as any}
           onClick={resetWidth}
-          className="absolute right-0 top-0 h-full w-1 cursor-ew-resize bg-primary/10 opacity-0 transition group-hover/sidebar:opacity-100"
+          className="absolute right-0 top-0 h-full w-1 cursor-ew-resize bg-stroke-2 opacity-0 transition group-hover/sidebar:opacity-100"
         />
       </aside>
       {/* Menu button when collapsed */}
@@ -144,5 +169,3 @@ const Navigation = (): JSX.Element => {
     </>
   )
 }
-
-export default Navigation

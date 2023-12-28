@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^4.29.1",
+    "@icon-park/react": "^1.4.2",
     "@ngrok/ngrok": "^0.9.1",
     "@prisma/client": "^5.7.1",
     "@radix-ui/react-slot": "^1.0.2",
