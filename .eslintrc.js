@@ -18,7 +18,8 @@ module.exports = {
     '@typescript-eslint/consistent-type-imports': 'off',
     '@typescript-eslint/consistent-type-definitions': 'off',
     'react/prop-types': 'off',
-    '@typescript-eslint/no-confusing-void-expression': 'off'
+    '@typescript-eslint/no-confusing-void-expression': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off'
   },
   settings: {
     react: {

@@ -14,6 +14,7 @@ import { LogoWitTitle } from '~/components/custom-icon/logo-with-title'
 
 import { Item } from './item'
 import { UserCollapse } from './user-collapse'
+import { UserDropdownOptions } from './user-dropdown-options'
 
 export const Sidebar = (): JSX.Element => {
   const router = useRouter()
@@ -110,7 +111,7 @@ export const Sidebar = (): JSX.Element => {
           role="button"
           onClick={collapse}
           className={cn(
-            'hover:bg-neutral-300 dark:hover:bg-neutral-600 h-6 w-6 rounded-sm text-muted-foreground',
+            'h-6 w-6 rounded-sm text-muted-foreground hover:bg-neutral-300 dark:hover:bg-neutral-600',
             'absolute right-2 top-3 z-[99999] opacity-0 transition group-hover/sidebar:opacity-100',
             isMobile && 'opacity-100'
           )}
@@ -118,13 +119,13 @@ export const Sidebar = (): JSX.Element => {
           <ChevronsLeft className="h-6 w-6" />
         </div>
         {/* Main Sidebar content */}
-        <main>
+        <main className="flex h-full flex-col">
           <Link href="/home" className="outline-core">
             <LogoWitTitle className="scale-90" />
           </Link>
           <nav>
-            <h4 className="text-core-secondary mt-8 px-6 font-extrabold">Menu</h4>
-            <ul className="mt-8 flex flex-col space-y-3 px-3">
+            <h4 className="mt-8 px-6 font-extrabold text-core-secondary">Menu</h4>
+            <div className="mt-8 flex flex-col space-y-3 px-3">
               {sidebarMenus.map((item, index) => {
                 return (
                   <Item
@@ -137,9 +138,10 @@ export const Sidebar = (): JSX.Element => {
                 )
               })}
               <Item onClick={() => {}} label="Settings" icon={SettingOne} />
-            </ul>
+            </div>
             <UserCollapse />
           </nav>
+          <UserDropdownOptions />
         </main>
         {/* Dragrable sizebar */}
         <div

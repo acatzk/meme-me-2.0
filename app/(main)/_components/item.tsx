@@ -13,8 +13,7 @@ type Props = {
 
 export const Item = ({ onClick, label, icon: Icon, href }: Props): JSX.Element => {
   const pathname = usePathname()
-  // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
-  const isActive = pathname.includes(href as string)
+  const isActive = pathname?.includes(href!)
 
   return (
     <div

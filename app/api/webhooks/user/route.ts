@@ -56,10 +56,10 @@ const handler = async (req: Request): Promise<Response | undefined> => {
 
     await prisma.user.upsert({
       where: {
-        externalId: id as string
+        externalId: id
       },
       create: {
-        externalId: id as string,
+        externalId: id,
         attributes: attributes as object
       },
       update: {
