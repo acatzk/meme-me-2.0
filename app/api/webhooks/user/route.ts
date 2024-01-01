@@ -51,19 +51,17 @@ const handler = async (req: Request): Promise<Response | undefined> => {
   }
 
   const eventType = evt.type
-  if (eventType === 'user.created' || eventType === 'user.updated') {
-    const { id, ...attributes } = evt.data
+  if (eventType === 'user.created') {
+    const { id, first_name, last_name, email_addresses, image_url } = evt.data
+    const emailAddress = email_addresses[0].email_address
 
-    await prisma.user.upsert({
-      where: {
-        externalId: id
-      },
-      create: {
+    await prisma.user.create({
+      data: {
         externalId: id,
-        attributes: attributes as object
-      },
-      update: {
-        attributes: attributes as object
+        name: `${first_name} ${last_name}`,
+        username: `${emailAddress.split('@')[0]}-${id}`,
+        email: emailAddress,
+        imageUrl: image_url
       }
     })
   }

@@ -17,7 +17,13 @@ export const exampleRouter = createTRPCRouter({
       },
       select: {
         id: true,
-        attributes: true
+        email: true,
+        createdAt: true,
+        externalId: true,
+        imageUrl: true,
+        name: true,
+        updatedAt: true,
+        username: true
       }
     })
   })

@@ -14,7 +14,10 @@ generator client {
 model User {
   id         Int      @id @default(autoincrement())
   externalId String   @unique
-  attributes Json
+  email      String   @unique
+  username   String   @unique
+  name       String
+  imageUrl   String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
