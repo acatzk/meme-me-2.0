@@ -8,11 +8,11 @@
  */
 import { ZodError } from 'zod'
 import superjson from 'superjson'
+import { auth } from '@clerk/nextjs'
 import { initTRPC, TRPCError } from '@trpc/server'
+import { SignedInAuthObject, SignedOutAuthObject, type getAuth } from '@clerk/nextjs/server'
 
-import { type getAuth } from '@clerk/nextjs/server'
-
-type AuthObject = ReturnType<typeof getAuth>
+import { db } from '~/server/db'
 
 /**
  * 1. CONTEXT
@@ -27,9 +27,12 @@ type AuthObject = ReturnType<typeof getAuth>
  * @see https://trpc.io/docs/server/context
  */
 /* eslint-disable */
-export const createTRPCContext = async (opts: { headers: Headers; auth: AuthObject }) => {
+export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const session = auth()
+
   return {
-    userId: opts.auth.userId,
+    db,
+    auth: session,
     ...opts
   }
 }
@@ -78,13 +81,17 @@ export const createTRPCRouter = t.router
 export const publicProcedure = t.procedure
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
-const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.userId) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' })
+const isAuthed = t.middleware(({ next, ctx }) => {
+  if (!ctx.auth.userId) {
+    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
   }
-  return next({ ctx: ctx })
+  return next({
+    ctx: {
+      auth: ctx.auth,
+      db
+    }
+  })
 })
-
 /**
  * Protected (authenticated) procedure
  *
@@ -93,4 +100,4 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(enforceUserIsAuthed)
+export const protectedProcedure = t.procedure.use(isAuthed)

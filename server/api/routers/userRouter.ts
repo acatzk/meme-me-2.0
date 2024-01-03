@@ -8,7 +8,7 @@ export const userRouter = createTRPCRouter({
   currentUser: protectedProcedure.query(async ({ ctx }) => {
     return await prisma.user.findUniqueOrThrow({
       where: {
-        externalId: ctx.userId as string
+        externalId: ctx.auth.userId
       },
       select: {
         id: true,

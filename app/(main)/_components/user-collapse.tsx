@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { ChevronDown, MessageSquareWarningIcon } from 'lucide-react'
 
 import { cn } from '~/lib/utils'
-import { trpc } from '~/app/_trpc/client'
+import { trpc } from '~/trpc/client'
 import { Skeleton } from '~/components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '~/components/ui/collapsible'
