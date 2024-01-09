@@ -42,7 +42,7 @@ export default function LandingLayout({ children }: Props): JSX.Element {
                 <h2 className="text-2xl font-bold text-secondary-foreground">
                   {isAuthenticated ? 'Go to the Home Page' : 'Log in to your Account'}
                 </h2>
-                <p className="text-sm font-medium text-secondary-200">Welcome back!</p>
+                <p className="text-secondary-200 text-sm font-medium">Welcome back!</p>
               </div>
             </div>
 

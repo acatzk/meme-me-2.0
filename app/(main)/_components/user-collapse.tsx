@@ -58,7 +58,7 @@ export const UserCollapse = (): JSX.Element => {
               >
                 @{user?.username}
               </h2>
-              <span className={cn('text-sm text-core-secondary-100')}>{user?.name}</span>
+              <span className={cn('text-sm text-core-secondary-100')}>{user?.displayName}</span>
             </div>
           </>
         )}

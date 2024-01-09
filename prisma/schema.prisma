@@ -12,12 +12,12 @@ generator client {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  externalId String   @unique
-  email      String   @unique
-  username   String   @unique
-  name       String
-  imageUrl   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          String   @id @default(cuid())
+  externalId  String   @unique
+  username    String   @unique
+  email       String   @unique
+  displayName String
+  imageUrl    String   @map("userImage")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

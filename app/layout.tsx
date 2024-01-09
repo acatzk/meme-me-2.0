@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Meme me',
-  description: 'Social media website for entertainment',
+  description: 'Social media website for fun & entertainment',
   icons: {
     icon: [
       {

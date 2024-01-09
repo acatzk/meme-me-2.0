@@ -54,18 +54,37 @@ export async function POST(req: Request): Promise<Response | undefined> {
     try {
       // 👉 `webhook.type` is a string value that describes what kind of event we need to handle
 
+      // 👉 If the type is "user.updated" the important values in the database will be updated in the users table
+      if (evt.type === 'user.updated') {
+        await db.user.update({
+          where: { externalId: evt.data.id },
+          data: {
+            username: evt.data.username || '',
+            displayName: `${evt.data.first_name} ${evt.data.last_name}`,
+            imageUrl: evt.data.image_url,
+            email: evt.data.email_addresses[0]?.email_address || ''
+          }
+        })
+      }
+
       // 👉 If the type is "user.created" create a record in the users table
       if (evt.type === 'user.created') {
         const emailAddress = evt.data.email_addresses[0]?.email_address
-
         await db.user.create({
           data: {
             externalId: evt.data.id,
             username: evt.data.username ?? `${emailAddress.split('@')[0]}-${evt.data.id}`,
-            name: `${evt.data.first_name} ${evt.data.last_name}`,
+            displayName: `${evt.data.first_name} ${evt.data.last_name}`,
             imageUrl: evt.data.image_url,
             email: emailAddress
           }
+        })
+      }
+
+      // 👉 If the type is "user.deleted", delete the user record and associated blocks
+      if (evt.type === 'user.deleted') {
+        await db.user.delete({
+          where: { externalId: evt.data.id }
         })
       }
 

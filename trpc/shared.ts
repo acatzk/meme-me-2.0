@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash'
 import superjson from 'superjson'
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
 
@@ -7,7 +8,7 @@ export const transformer = superjson
 
 function getBaseUrl(): string {
   if (typeof window !== 'undefined') return ''
-  if (process.env.VERCEL_URL !== null) return `https://${process.env.VERCEL_URL}`
+  if (!isEmpty(process.env.VERCEL_URL)) return `https://${process.env.VERCEL_URL}`
   return `http://localhost:${process.env.PORT ?? 3000}`
 }
 

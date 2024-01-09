@@ -9,8 +9,8 @@
 import { ZodError } from 'zod'
 import superjson from 'superjson'
 import { auth } from '@clerk/nextjs'
+import * as Sentry from '@sentry/node'
 import { initTRPC, TRPCError } from '@trpc/server'
-import { SignedInAuthObject, SignedOutAuthObject, type getAuth } from '@clerk/nextjs/server'
 
 import { db } from '~/server/db'
 
@@ -92,6 +92,14 @@ const isAuthed = t.middleware(({ next, ctx }) => {
     }
   })
 })
+
+const sentryMiddleware = t.middleware(
+  Sentry.Handlers.trpcMiddleware({
+    attachRpcInput: true
+  })
+)
+
+const sentryIsAuthedMiddleware = sentryMiddleware.unstable_pipe(isAuthed)
 /**
  * Protected (authenticated) procedure
  *
@@ -100,4 +108,4 @@ const isAuthed = t.middleware(({ next, ctx }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(isAuthed)
+export const protectedProcedure = t.procedure.use(sentryIsAuthedMiddleware)
