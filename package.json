@@ -36,6 +36,7 @@
     "prisma": "^5.7.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-nice-avatar": "^1.5.0",
     "react-responsive-carousel": "^3.2.23",
     "sharp": "^0.33.1",
     "sonner": "^1.2.4",

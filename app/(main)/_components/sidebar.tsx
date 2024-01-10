@@ -9,7 +9,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import React, { ElementRef, MouseEvent, useEffect, useRef, useState } from 'react'
 
 import { cn } from '~/lib/utils'
-import { sidebarMenus } from '~/constant/sidebarMenus'
+import { sidebarMenus } from '~/constant/sidebar-menus'
 import { LogoWitTitle } from '~/components/custom-icon/logo-with-title'
 
 import { Item } from './item'

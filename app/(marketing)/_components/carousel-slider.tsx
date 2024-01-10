@@ -2,7 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import { Carousel } from 'react-responsive-carousel'
 
-import { carouselImages } from '~/constant/carouselImages'
+import { carouselImages } from '~/constant/carousel-image'
 
 export const CarouselSlider = (): JSX.Element => {
   return (
