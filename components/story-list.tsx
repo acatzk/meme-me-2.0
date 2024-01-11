@@ -45,7 +45,7 @@ export const StoryList = (): JSX.Element => {
             <Plus className="h-5 w-5 text-white" />
           </div>
         </div>
-        <h4 className="line-clamp text-xs font-semibold text-secondary">You</h4>
+        <h4 className="line-clamp text-xs font-semibold text-core-secondary">You</h4>
       </div>
       <ul className="mr-2 flex w-full items-center gap-x-6 pl-2">
         {dummyUserStories.map((story, index) => {
@@ -63,7 +63,7 @@ export const StoryList = (): JSX.Element => {
                   {...avatar}
                 />
               </div>
-              <h4 className="line-clamp-1 w-12 text-center text-xs font-semibold text-secondary">
+              <h4 className="line-clamp-1 w-12 text-center text-xs font-semibold text-core-secondary">
                 {story.username}
               </h4>
             </li>

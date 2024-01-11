@@ -29,7 +29,7 @@ type RootLayoutProps = {
 export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
           <TRPCProvider>
             <Toaster />

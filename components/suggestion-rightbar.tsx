@@ -26,8 +26,8 @@ export const SuggestionRightBar = (): JSX.Element => {
   ]
 
   return (
-    <div className="custom-scrollbar flex h-full flex-col overflow-y-auto">
-      <div className="h-full px-4 py-6">
+    <div className="custom-scrollbar flex h-screen flex-col overflow-y-auto">
+      <div className="hidden h-full px-4 py-6 md:block">
         {/* User Options  */}
         <header className="flex items-center gap-x-2">
           {/* Search Field */}
@@ -98,7 +98,7 @@ export const SuggestionRightBar = (): JSX.Element => {
           </main>
         )}
       </div>
-      <div className="mb-auto">
+      <div className="mb-auto hidden md:block">
         <ul className="flex items-center gap-x-2 px-4 py-2 text-xs text-core-secondary-100">
           {businessLinks.map((item, index) => (
             <React.Fragment key={index}>

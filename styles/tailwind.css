@@ -60,6 +60,12 @@ body,
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply custom-scrollbar bg-background text-foreground antialiased selection:bg-primary selection:text-white;
+  }
+}
+
+@layer components {
+  .custom-scrollbar {
+    @apply scrollbar-thin scrollbar-thumb-slate-300 scrollbar-thumb-rounded-md;
   }
 }

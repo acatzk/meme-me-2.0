@@ -25,7 +25,7 @@ export const FeedFilterTab = (): JSX.Element => {
     <ul
       className={clsx(
         'inline-flex items-center gap-x-6 font-semibold',
-        ' text-secondary-100 flex-wrap gap-y-2 text-sm'
+        'flex-wrap gap-y-2 text-sm text-core-secondary-100'
       )}
     >
       {shallowLinks.map((link) => (
@@ -34,7 +34,7 @@ export const FeedFilterTab = (): JSX.Element => {
             type="button"
             className={clsx(
               'outline-none transition duration-75 ease-in-out',
-              link.filter === 'all' ? 'text-primary' : 'hover:text-secondary-300'
+              link.filter === 'all' ? 'text-primary' : 'hover:text-core-secondary-300'
             )}
           >
             {link.label}

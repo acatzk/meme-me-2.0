@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { isEmpty } from 'lodash'
 import { useMediaQuery } from 'usehooks-ts'
 import { SettingOne } from '@icon-park/react'
-import { ChevronsLeft, MenuIcon } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { ElementRef, MouseEvent, useEffect, useRef, useState } from 'react'
 
@@ -14,6 +14,7 @@ import { LogoWitTitle } from '~/components/custom-icon/logo-with-title'
 
 import { Item } from './item'
 import { UserCollapse } from './user-collapse'
+import { Button } from '~/components/ui/button'
 import { UserDropdownOptions } from './user-dropdown-options'
 
 export const Sidebar = (): JSX.Element => {
@@ -101,23 +102,23 @@ export const Sidebar = (): JSX.Element => {
       <aside
         ref={sidebarRef}
         className={cn(
-          'group/sidebar relative z-[99999] flex h-full w-[288px] flex-col overflow-y-auto bg-white',
+          'group/sidebar custom-scrollbar relative z-[99999] flex h-full w-[288px] flex-col overflow-y-auto bg-white',
           isResetting && 'transition-all duration-300 ease-in-out',
           isMobile && 'w-0'
         )}
       >
         {/* Collapse button */}
-        <div
-          role="button"
+        <Button
           onClick={collapse}
+          size="icon"
           className={cn(
-            'h-6 w-6 rounded-sm text-muted-foreground hover:bg-neutral-300 dark:hover:bg-neutral-600',
-            'absolute right-2 top-3 z-[99999] opacity-0 transition group-hover/sidebar:opacity-100',
+            'absolute -right-0 top-24 z-[99999] opacity-0 transition group-hover/sidebar:opacity-100',
+            'rounded-full',
             isMobile && 'opacity-100'
           )}
         >
-          <ChevronsLeft className="h-6 w-6" />
-        </div>
+          <ChevronLeft className="h-6 w-6" />
+        </Button>
         {/* Main Sidebar content */}
         <main className="flex h-full flex-col">
           <Link href="/home" className="outline-core">
@@ -162,11 +163,16 @@ export const Sidebar = (): JSX.Element => {
       >
         <nav className="w-full bg-transparent px-3 py-2">
           {isCollapsed && (
-            <MenuIcon
+            <Button
+              size="icon"
               onClick={resetWidth}
-              className="h-6 w-6 text-muted-foreground"
-              role="button"
-            />
+              className={cn(
+                'absolute -left-2 top-24 z-[99999] transition group-hover/sidebar:opacity-100',
+                'rounded-full'
+              )}
+            >
+              <ChevronRight className="h-6 w-6" />
+            </Button>
           )}
         </nav>
       </div>
