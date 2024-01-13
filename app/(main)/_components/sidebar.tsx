@@ -3,24 +3,48 @@
 import Link from 'next/link'
 import { isEmpty } from 'lodash'
 import { useMediaQuery } from 'usehooks-ts'
-import { SettingOne } from '@icon-park/react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { ElementRef, MouseEvent, useEffect, useRef, useState } from 'react'
+import { BookmarkOne, HomeTwo, People, Wechat, SettingOne } from '@icon-park/react'
 
 import { cn } from '~/lib/utils'
-import { sidebarMenus } from '~/constant/sidebar-menus'
+import { trpc } from '~/trpc/client'
+import { Button } from '~/components/ui/button'
 import { LogoWitTitle } from '~/components/custom-icon/logo-with-title'
 
 import { Item } from './item'
 import { UserCollapse } from './user-collapse'
-import { Button } from '~/components/ui/button'
 import { UserDropdownOptions } from './user-dropdown-options'
 
 export const Sidebar = (): JSX.Element => {
   const router = useRouter()
   const pathname = usePathname()
   const isMobile = useMediaQuery('(max-width: 768px)')
+  const currentUser = trpc.user.currentUser.useQuery()
+
+  const sidebarMenus = [
+    {
+      Icon: HomeTwo,
+      name: 'Home',
+      href: '/home'
+    },
+    {
+      Icon: Wechat,
+      name: 'Messages',
+      href: '/messages'
+    },
+    {
+      Icon: People,
+      name: 'Profile',
+      href: `/@${currentUser?.data?.username ?? '/'}`
+    },
+    {
+      Icon: BookmarkOne,
+      name: 'Saved Post',
+      href: '/saved-post'
+    }
+  ]
 
   const isResizingRef = useRef(false)
   const sidebarRef = useRef<ElementRef<'aside'>>(null)
@@ -149,7 +173,7 @@ export const Sidebar = (): JSX.Element => {
           role="button"
           onMouseDown={handleMouseDown as any}
           onClick={resetWidth}
-          className="absolute right-0 top-0 h-full w-1 cursor-ew-resize bg-stroke-2 opacity-0 transition group-hover/sidebar:opacity-100"
+          className="absolute right-0 top-0 z-[99999] h-full w-1 cursor-ew-resize bg-stroke-2 opacity-0 transition group-hover/sidebar:opacity-100"
         />
       </aside>
       {/* Menu button when collapsed */}

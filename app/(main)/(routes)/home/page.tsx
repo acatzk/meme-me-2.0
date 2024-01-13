@@ -2,7 +2,7 @@ import React from 'react'
 
 import { UserPost } from '~/components/user-post'
 
-import HomeLayout from './../../_components/layout/home-layout'
+import HomeLayout from '../../../../components/layouts/home-layout'
 
 export default function HomePage(): JSX.Element {
   return (
