@@ -7,6 +7,7 @@ import { FileWarningIcon } from 'lucide-react'
 import { Remind, UploadOne } from '@icon-park/react'
 
 import { cn } from '~/lib/utils'
+import { useUpload } from '~/hooks/use-upload'
 import { Spinner } from '~/components/custom-icon/spinner'
 
 import { SearchField } from './search-field'
@@ -14,6 +15,7 @@ import { SuggestedUserList } from './suggested-user-list'
 import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 
 export const SuggestionRightBar = (): JSX.Element => {
+  const upload = useUpload()
   const isLoading = false
   const isError = false
 
@@ -35,8 +37,7 @@ export const SuggestionRightBar = (): JSX.Element => {
             <SearchField />
           </div>
           {/* Notification Bell Button */}
-          <div
-            role="button"
+          <button
             className={cn(
               'rounded-full border border-stroke-2 bg-section-1 p-4',
               'transition ease-in-out focus:ring-2 focus:ring-primary',
@@ -45,10 +46,10 @@ export const SuggestionRightBar = (): JSX.Element => {
             )}
           >
             <Remind size={20} theme="filled" />
-          </div>
+          </button>
           {/* Upload Button */}
-          <div
-            role="button"
+          <button
+            onClick={() => upload.onOpen()}
             className={cn(
               'rounded-full bg-fancyBlue p-4 text-white',
               'transition duration-200 ease-in-out focus:ring-2',
@@ -56,7 +57,7 @@ export const SuggestionRightBar = (): JSX.Element => {
             )}
           >
             <UploadOne size={20} theme="filled" />
-          </div>
+          </button>
         </header>
         {isError && (
           <div className="py-4">
@@ -90,7 +91,7 @@ export const SuggestionRightBar = (): JSX.Element => {
                 width={300}
                 height={300}
                 quality={50}
-                priority={true}
+                priority={false}
                 className="overflow-hidden rounded-xl"
                 alt=""
               />

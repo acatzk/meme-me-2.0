@@ -6,6 +6,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 
 import '~/styles/globals.css'
 import { TRPCProvider } from '~/components/providers/trpc-provider'
+import { ModalProvider } from '~/components/providers/modal-providers'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -32,7 +33,8 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
       <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
           <TRPCProvider>
-            <Toaster />
+            <Toaster position="bottom-center" />
+            <ModalProvider />
             {children}
           </TRPCProvider>
         </body>
