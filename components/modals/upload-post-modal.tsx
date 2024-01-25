@@ -1,50 +1,265 @@
 'use client'
 
-import React from 'react'
+import Image from 'next/image'
+import { isEmpty } from 'lodash'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { ChevronLeft, MapPin } from 'lucide-react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import React, { ChangeEvent, ReactNode, useState } from 'react'
 
+import { cn } from '~/lib/utils'
+import { trpc } from '~/trpc/client'
+import { Tag } from '~/helpers/tag-helpers'
 import { useUpload } from '~/hooks/use-upload'
+import { Emoji } from '~/helpers/emoji-helpers'
+import { PostSchema, PostSchemaType } from '~/zod/schema'
 import { Dialog, DialogContent, DialogHeader } from '~/components/ui/dialog'
 
 import { Button } from './../ui/button'
+import { Carousel } from './../carousel'
+import { TagInput } from './../tag-input'
+import { EmojiPicker } from './../emoji-picker'
+import { Spinner } from './../custom-icon/spinner'
 import { UploadPhotoVideoIcon } from './../custom-icon/upload-video-icon'
 
 export const UploadPostModal = (): JSX.Element => {
   const upload = useUpload()
+  const currentUser = trpc.user.currentUser.useQuery()
+
+  const [tags, setTags] = useState<Tag[]>([])
+  const [files, setFiles] = useState<File[]>([])
+  const [fileUrls, setFileUrls] = useState<string[]>([])
+
+  const isFileExist = files
+
+  const {
+    reset,
+    watch,
+    register,
+    setValue,
+    handleSubmit,
+    formState: { isSubmitting }
+  } = useForm<PostSchemaType>({
+    mode: 'onTouched',
+    resolver: zodResolver(PostSchema)
+  })
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const files = e.target.files
+    const fileArray = files !== null ? Array.from(files) : []
+    setFiles(fileArray) // * USE TO PREPARE TO UPLOAD IN `UPLOADTHING`
+
+    // * USE TO PARTIALLY DISPLAY THE IMAGE/VIDEOS
+    const urls = fileArray.map((file) => URL.createObjectURL(file))
+    setFileUrls(urls)
+
+    setValue(
+      'mediaFiles',
+      fileArray.map((p, k) => ({
+        key: k.toString(),
+        url: p.type
+      }))
+    )
+  }
+
+  const handleReset = (): void => {
+    setFileUrls([])
+    setFiles([])
+    reset({
+      mediaFiles: undefined,
+      captions: '',
+      location: ''
+    })
+  }
+
+  // * THIS WILL AUTOMATICALLY ADD THE VALUE WITH EMOJI
+  const handleEmojiSelect = (emoji: Emoji): void => {
+    const captions = watch('captions')
+    if (captions?.length === 200) return
+
+    if (captions !== undefined) {
+      setValue('captions', captions + emoji.native)
+    }
+  }
+
+  const handlePost: SubmitHandler<PostSchemaType> = async (data): Promise<void> => {
+    // console.log(data)
+    // console.log(tags)
+    handleReset()
+  }
 
   return (
     <Dialog open={upload.isOpen} onOpenChange={upload.onClose}>
-      <DialogContent className="max-w-[519px] rounded-xl px-0 py-0">
-        <DialogHeader className="border-b border-stroke-3 py-2">
-          <h2 className="text-center text-lg font-bold text-core-secondary">Create new post</h2>
-        </DialogHeader>
-        {/* <hr /> */}
-        <main className="flex min-h-[500px] items-center justify-center p-5">
-          <section className="flex flex-col items-center justify-center">
-            <div className="flex flex-col items-center rounded-lg border border-dashed border-core-secondary-100 p-4">
-              <input className="hidden" />
-              <UploadPhotoVideoIcon className="h-36 w-40 text-core-secondary" />
-              <h1 className="text-xl font-medium text-core-secondary">
-                Drag photos and videos here
-              </h1>
-            </div>
-            <input
-              type="file"
-              id="file-upload"
-              name="file-upload"
-              accept="image/*, video/*"
-              style={{ display: 'none' }}
-              multiple={true}
-            />
-            <Button
-              type="button"
-              variant="primary"
-              onClick={() => document.getElementById('file-upload')?.click()}
-              className="mt-4 px-4 py-1 text-sm"
-            >
-              Select from computer
-            </Button>
-          </section>
-        </main>
+      <DialogContent
+        className={cn(
+          'rounded-xl bg-white p-0',
+          !isEmpty(isFileExist) ? 'max-w-[710px]' : 'max-w-xl'
+        )}
+      >
+        <form
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          onSubmit={handleSubmit(handlePost)}
+        >
+          <DialogHeader className="flex flex-row items-center justify-between border-b border-stroke-3 px-3 py-2.5">
+            {!isEmpty(isFileExist) ? (
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={handleReset}
+                className="rounded-full outline-primary disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <ChevronLeft />
+              </button>
+            ) : (
+              <span></span>
+            )}
+            <h2 className="text-center font-bold">Create new post</h2>
+            {!isEmpty(isFileExist) ? (
+              <button
+                type="submit"
+                className={cn(
+                  'hover:text-primary-200 p-0.5 text-sm font-semibold text-primary outline-primary',
+                  isSubmitting ? 'disabled:cursor-not-allowed disabled:opacity-50' : ''
+                )}
+              >
+                {isSubmitting ? <Spinner size="icon" /> : 'Share'}
+              </button>
+            ) : (
+              <span></span>
+            )}
+          </DialogHeader>
+          {/* <hr /> */}
+          <main
+            className={cn('min-h-[500px]', isEmpty(isFileExist) && 'flex place-content-center')}
+          >
+            {isEmpty(isFileExist) && (
+              <section className="flex flex-col items-center justify-center">
+                <div className="flex flex-col items-center rounded-lg border border-dashed border-core-secondary-100 p-4">
+                  <input className="hidden" />
+                  <UploadPhotoVideoIcon className="h-36 w-40 text-core-secondary" />
+                  <h1 className="text-xl font-medium text-core-secondary">
+                    Drag photos and videos here
+                  </h1>
+                </div>
+                <input
+                  type="file"
+                  id="file-upload"
+                  name="file-upload"
+                  accept="image/*, video/*"
+                  style={{ display: 'none' }}
+                  onChange={handleFileChange}
+                  multiple={true}
+                />
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={() => document.getElementById('file-upload')?.click()}
+                  className="mt-4 px-4 py-1 text-sm"
+                >
+                  Select from computer
+                </Button>
+              </section>
+            )}
+            {!isEmpty(isFileExist) && (
+              <section className="relative flex h-full flex-col-reverse md:flex-row">
+                <div
+                  className={cn(
+                    'flex h-full min-h-[550px] w-full justify-center rounded-bl-2xl',
+                    'max-w-sm items-center overflow-hidden bg-black'
+                  )}
+                >
+                  <Carousel>
+                    {
+                      fileUrls?.map((asset, idx) => {
+                        if (asset.endsWith('.mp4')) {
+                          return (
+                            <video key={idx} src={asset} autoPlay muted loop className="w-full">
+                              Your browser does not support the video tag.
+                            </video>
+                          )
+                        } else {
+                          return (
+                            <img
+                              key={idx}
+                              src={asset}
+                              alt=""
+                              className="h-full w-full flex-1 object-fill"
+                            />
+                          )
+                        }
+                      }) as ReactNode[]
+                    }
+                  </Carousel>
+                </div>
+                <div className="w-full p-4 md:w-80">
+                  <div className="flex items-center space-x-2">
+                    <Image
+                      src={
+                        currentUser?.data?.imageUrl ??
+                        'https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg'
+                      }
+                      width={32}
+                      height={32}
+                      className="rounded-full border-[3px] border-white shadow outline-4"
+                      alt="User Profile"
+                    />
+                    <h2 className="font-semibold">{currentUser?.data?.displayName}</h2>
+                  </div>
+                  <section className="relative mt-2">
+                    <textarea
+                      placeholder="Write a caption"
+                      maxLength={200}
+                      {...register('captions')}
+                      className={cn(
+                        'min-h-[15vh] w-full resize-none border-0 p-0 focus:outline-none focus:ring-0',
+                        'custom-scrollbar text-sm text-core-secondary placeholder:text-core-secondary-200',
+                        'font-medium',
+                        isSubmitting ? 'disabled:cursor-not-allowed disabled:opacity-50' : ''
+                      )}
+                      disabled={isSubmitting}
+                    ></textarea>
+                    <div className="flex items-center justify-between text-core-secondary-200">
+                      <EmojiPicker
+                        {...{
+                          handleEmojiSelect,
+                          isSubmitting
+                        }}
+                      />
+                      <span className="text-xs font-normal">{`${
+                        watch('captions')?.length ?? 0
+                      }/200`}</span>
+                    </div>
+                  </section>
+                  <section className="relative z-50 mt-2">
+                    <TagInput
+                      {...{
+                        state: {
+                          tags,
+                          setTags
+                        },
+                        data: []
+                      }}
+                    />
+                  </section>
+                  <section className="relative mt-2 flex items-center justify-between space-x-2 text-core-secondary-200">
+                    <input
+                      type="text"
+                      placeholder="Add location"
+                      {...register('location')}
+                      className={cn(
+                        'border-1 m-0 w-full border-[#eee] py-2 text-xs focus:bottom-0 focus:outline-none focus:ring-0',
+                        'font-normal text-core-secondary placeholder:text-core-secondary-200',
+                        isSubmitting ? 'disabled:cursor-not-allowed disabled:opacity-50' : ''
+                      )}
+                      disabled={isSubmitting}
+                    />
+                    <MapPin className="absolute right-2 h-4 w-4 stroke-1 text-core-secondary-200" />
+                  </section>
+                </div>
+              </section>
+            )}
+          </main>
+        </form>
       </DialogContent>
     </Dialog>
   )
