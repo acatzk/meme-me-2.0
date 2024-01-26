@@ -12,7 +12,9 @@ export const PostSchema = z.object({
     })
   ),
   captions: z.string().max(200).optional(),
-  location: z.string().optional()
+  location: z.string().optional(),
+  isHideLikeAndCount: z.boolean().default(false),
+  isTurnOffComment: z.boolean().default(false)
 })
 
 export type PostSchemaType = z.infer<typeof PostSchema>
