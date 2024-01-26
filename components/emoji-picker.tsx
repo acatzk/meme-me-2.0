@@ -31,7 +31,7 @@ export const EmojiPicker = (props: EmojiPickerProps): JSX.Element => {
           type="button"
           variant="ghost"
           size="icon"
-          className="rounded-full text-slate-400 hover:text-slate-500"
+          className="rounded-full text-slate-400 hover:text-slate-600"
         >
           <WinkingFace theme="outline" size="22" strokeWidth={2} />
         </Button>

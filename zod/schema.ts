@@ -3,14 +3,12 @@ import { z } from 'zod'
 export const PostSchema = z.object({
   mediaFiles: z.array(
     z.object({
-      key: z.string().optional(),
-      //   .refine((value) => value.trim() !== '', {
-      //     message: 'Media key is required'
-      //   })
-      url: z.string().optional()
-      // .refine((value) => value.trim() !== '', {
-      //   message: 'Media URL is required'
-      // })
+      key: z.string().refine((value) => value.trim() !== '', {
+        message: 'Media key is required'
+      }),
+      url: z.string().refine((value) => value.trim() !== '', {
+        message: 'Media URL is required'
+      })
     })
   ),
   captions: z.string().max(200).optional(),

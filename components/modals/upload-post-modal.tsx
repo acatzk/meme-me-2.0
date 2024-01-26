@@ -122,7 +122,7 @@ export const UploadPostModal = (): JSX.Element => {
                   isSubmitting ? 'disabled:cursor-not-allowed disabled:opacity-50' : ''
                 )}
               >
-                {isSubmitting ? <Spinner size="icon" /> : 'Share'}
+                {isSubmitting ? <Spinner /> : 'Share'}
               </button>
             ) : (
               <span></span>
