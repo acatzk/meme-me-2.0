@@ -1,22 +1,25 @@
 import React from 'react'
-import dynamic from 'next/dynamic'
+import { WithContext as ReactTags } from 'react-tag-input'
 
-import { Tag, delimiters, dummyTags } from '~/helpers/tag-helpers'
-
-const ReactTags = dynamic(async () => (await import('react-tag-input')).WithContext, {
-  ssr: false
-})
+import { Tag, delimiters } from '~/helpers/tag-helpers'
 
 export type TagInputProps = {
   state: {
     tags: Tag[]
     setTags: React.Dispatch<React.SetStateAction<Tag[]>>
   }
+  data:
+    | Array<{
+        id: number
+        tag: string
+      }>
+    | undefined
 }
 
 export const TagInput = (props: TagInputProps): JSX.Element => {
   const {
-    state: { tags, setTags }
+    state: { tags, setTags },
+    data
   } = props
 
   const handleDeleteTag = (i: number): void => {
@@ -40,9 +43,9 @@ export const TagInput = (props: TagInputProps): JSX.Element => {
   return (
     <ReactTags
       tags={tags}
-      suggestions={dummyTags?.map((hashtag) => ({
+      suggestions={data?.map((hashtag) => ({
         id: hashtag.id.toString(),
-        text: hashtag.text
+        text: hashtag.tag
       }))}
       delimiters={delimiters}
       handleDelete={handleDeleteTag}
