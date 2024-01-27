@@ -1,11 +1,14 @@
 'use client'
 
 import Image from 'next/image'
+import { toast } from 'sonner'
 import { isEmpty } from 'lodash'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { FileWithPath, useDropzone } from 'react-dropzone'
 import { ChevronDown, ChevronLeft, MapPin } from 'lucide-react'
-import React, { ChangeEvent, ReactNode, useState } from 'react'
+import { generateClientDropzoneAccept } from 'uploadthing/client'
+import React, { ChangeEvent, ReactNode, useCallback, useState } from 'react'
 
 import { cn } from '~/lib/utils'
 import { trpc } from '~/trpc/client'
@@ -14,6 +17,7 @@ import { useUpload } from '~/hooks/use-upload'
 import { Emoji } from '~/helpers/emoji-helpers'
 import { Textarea } from '~/components/ui/textarea'
 import { PostSchema, PostSchemaType } from '~/zod/schema'
+import { MediaFiles, useUploadThing } from '~/helpers/uploadthing'
 import { Dialog, DialogContent, DialogHeader } from '~/components/ui/dialog'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '~/components/ui/collapsible'
 import {
@@ -37,6 +41,7 @@ export const UploadPostModal = (): JSX.Element => {
   const upload = useUpload()
   const currentUser = trpc.user.currentUser.useQuery()
   const hashtags = trpc.hashtag.getHashtags.useQuery()
+  const createPost = trpc.post.create.useMutation()
 
   const [tags, setTags] = useState<Tag[]>([])
   const [files, setFiles] = useState<File[]>([])
@@ -77,6 +82,38 @@ export const UploadPostModal = (): JSX.Element => {
     )
   }
 
+  // * UPLOAD THING HOOKS
+  const { startUpload } = useUploadThing('mediaPost', {
+    onClientUploadComplete: (res) => {
+      const mediaFiles = res?.map((file) => file)
+      setValue(
+        'mediaFiles',
+        mediaFiles?.map((m) => ({
+          key: m.key,
+          url: m.url
+        })) as MediaFiles[]
+      )
+    },
+    onUploadError: (error) => {
+      toast.error(error.message)
+    }
+  })
+
+  // * UPLOAD THING ONDROP
+  const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
+    setFiles(acceptedFiles) // * USE TO PREPARE TO UPLOAD IN `UPLOADTHING`
+
+    // * USE TO PARTIALLY DISPLAY THE IMAGE/VIDEOS
+    const urls = acceptedFiles.map((file) => URL.createObjectURL(file))
+    setFileUrls(urls)
+  }, [])
+
+  const fileTypes = ['image', 'video']
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: !isEmpty(fileTypes) ? generateClientDropzoneAccept(fileTypes) : undefined
+  })
+
   const handleCollapsibleChange = (): void => setAdvanceSetting((prev) => !prev)
 
   const handleReset = (): void => {
@@ -100,10 +137,54 @@ export const UploadPostModal = (): JSX.Element => {
   }
 
   const onPost: SubmitHandler<PostSchemaType> = async (data): Promise<void> => {
-    // console.log({
-    //   ...data,
-    //   tags
-    // })
+    const uploads = await startUpload(files)
+      .then(
+        (p) =>
+          p?.map((d) => ({
+            key: d.key,
+            url: d.url
+          }))
+      )
+      .catch(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        (error: any) => toast.error(error?.message)
+      )
+
+    if (!isEmpty(uploads)) {
+      await createPost.mutateAsync(
+        {
+          title: data.captions ?? '',
+          mediaFiles: {
+            createMany: {
+              data: uploads as MediaFiles[]
+            }
+          },
+          isHideLikeAndCount: data.isHideLikeAndCount,
+          isTurnOffComment: data.isTurnOffComment,
+          postHashtags: {
+            create: tags?.map((t) => ({
+              hashtag: {
+                connectOrCreate: {
+                  where: { tag: t.text },
+                  create: { tag: t.text }
+                }
+              }
+            }))
+          }
+        },
+        {
+          onSuccess() {
+            toast.success('Created new post successfully!')
+          },
+          onSettled() {
+            handleReset()
+            upload.onClose()
+          }
+        }
+      )
+    } else {
+      toast.error('Something went wrong!')
+    }
   }
 
   return (
@@ -153,8 +234,11 @@ export const UploadPostModal = (): JSX.Element => {
             >
               {isEmpty(isFileExist) && (
                 <section className="flex flex-col items-center justify-center">
-                  <div className="flex flex-col items-center rounded-lg border border-dashed border-core-secondary-100 p-4">
-                    <input className="hidden" />
+                  <div
+                    {...getRootProps()}
+                    className="flex flex-col items-center rounded-lg border border-dashed border-core-secondary-100 p-4"
+                  >
+                    <input {...getInputProps()} className="hidden" />
                     <UploadPhotoVideoIcon className="h-36 w-40 text-core-secondary" />
                     <h1 className="text-xl font-medium text-core-secondary">
                       Drag photos and videos here

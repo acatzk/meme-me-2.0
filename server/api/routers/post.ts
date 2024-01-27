@@ -1,22 +1,19 @@
-import { PostSchema } from '~/zod/schema'
+import { PostInput } from '~/zod/input'
 
 import { protectedProcedure, createTRPCRouter } from './../trpc'
 
 export const postRouter = createTRPCRouter({
-  create: protectedProcedure.input(PostSchema).mutation(async ({ input, ctx }) => {
+  create: protectedProcedure.input(PostInput).mutation(async ({ input, ctx }) => {
     return await ctx.db.post.create({
       data: {
-        mediaFiles: {
-          createMany: {
-            data: input.mediaFiles
-          }
-        },
+        title: input.title,
+        mediaFiles: input.mediaFiles,
         isHideLikeAndCount: input.isHideLikeAndCount,
         isTurnOffComment: input.isTurnOffComment,
-        title: input.captions,
+        postHashtags: input.postHashtags,
         user: {
           connect: {
-            id: parseInt(ctx.auth.userId)
+            externalId: ctx.auth.userId
           }
         }
       },
