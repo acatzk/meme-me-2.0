@@ -119,6 +119,7 @@ export const UploadPostModal = (): JSX.Element => {
   const handleReset = (): void => {
     setFileUrls([])
     setFiles([])
+    setTags([])
     reset({
       mediaFiles: undefined,
       captions: '',

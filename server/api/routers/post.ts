@@ -45,10 +45,36 @@ export const postRouter = createTRPCRouter({
         orderBy: {
           createdAt: 'desc'
         },
-        include: {
-          user: true,
-          mediaFiles: true,
-          postHashtags: true
+        select: {
+          id: true,
+          title: true,
+          mediaFiles: {
+            select: {
+              key: true,
+              url: true
+            }
+          },
+          createdAt: true,
+          updatedAt: true,
+          isHideLikeAndCount: true,
+          isTurnOffComment: true,
+          user: {
+            select: {
+              id: true,
+              displayName: true,
+              email: true,
+              username: true
+            }
+          },
+          postHashtags: {
+            select: {
+              hashtag: {
+                select: {
+                  tag: true
+                }
+              }
+            }
+          }
         }
       })
 

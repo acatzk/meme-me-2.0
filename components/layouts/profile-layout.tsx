@@ -7,9 +7,8 @@ import { usePathname, useRouter } from 'next/navigation'
 
 import { trpc } from '~/trpc/client'
 import { Button } from '~/components/ui/button'
+import { Tab } from '~/app/(main)/_components/tab'
 import { profileTabs } from '~/constant/profile-tabs'
-
-import { Tab } from '../../app/(main)/_components/tab'
 
 export type ProfileLayoutProps = {
   children: ReactNode
@@ -18,6 +17,7 @@ export type ProfileLayoutProps = {
 export default function ProfileLayout({ children }: ProfileLayoutProps): JSX.Element {
   const router = useRouter()
   const pathname = usePathname()
+  // const username = pathname.replace(/[/@]/g, '')
   const currentUser = trpc.user.currentUser.useQuery()
 
   const handleGoBackRoute = (): void => {
@@ -81,10 +81,10 @@ export default function ProfileLayout({ children }: ProfileLayoutProps): JSX.Ele
               </div>
               <div className="flex flex-col space-y-0.5">
                 <h1 className="font-bold uppercase">{currentUser?.data?.displayName}</h1>
-                <p className="text-core-secondary-300">I think therefore I am</p>
+                {/* <p className="text-core-secondary-300">I think therefore I am</p>
                 <a href="#" className="font-semibold text-primary hover:underline">
                   joshuagalit.ga
-                </a>
+                </a> */}
               </div>
             </div>
           </div>

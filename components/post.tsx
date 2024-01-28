@@ -2,107 +2,172 @@
 
 import clsx from 'clsx'
 import React from 'react'
+import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { ShareTwo } from '@icon-park/react'
 import { genConfig } from 'react-nice-avatar'
 import { Bookmark, Heart, MessageCircle } from 'lucide-react'
 
+import { IPost } from '~/helpers/interfaces'
 import { Button } from '~/components/ui/button'
+import { Reaction } from '~/helpers/emoji-helpers'
+import { formatTimeDifference } from '~/helpers/format-time-diff'
 import { defaultAvatarStyle } from '~/constant/default-avatar-style'
+import { convertHashtagsToLinks } from '~/helpers/convert-hashtags-to-link'
+
+import { Hashtag } from './hashtag'
+import { Carousel } from './carousel'
+import { ReactionButton } from './reaction-button'
 
 const ReactNiceAvatar = dynamic(async () => await import('react-nice-avatar'), { ssr: false })
 
-export const Post = (): JSX.Element => {
+type PostProps = {
+  post: IPost
+  isAuthor: boolean
+}
+
+export const Post = ({ post, isAuthor }: PostProps): JSX.Element => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const myConfig = genConfig(defaultAvatarStyle as any)
+  const user = post.user
+  const mediaFiles = post.mediaFiles
+  const postHashtags = post.postHashtags
+
+  const reactions = [
+    {
+      type: 'heart',
+      count: 0
+    },
+    {
+      type: 'comment',
+      count: 0
+    },
+    {
+      type: 'bookmark',
+      count: 0
+    },
+    {
+      type: 'share',
+      count: 0
+    }
+  ]
 
   return (
-    <div className="flex items-start justify-between py-6">
-      <div className={clsx('flex flex-col items-start gap-x-3 gap-y-2 sm:flex-row')}>
-        <ReactNiceAvatar
-          className={clsx(
-            'h-12 w-12 shrink-0 rounded-full border-[3px] border-white shadow outline-4'
-          )}
-          {...myConfig}
-        />
-        <div className="flex w-full max-w-sm shrink-0 flex-col">
-          <div className="flex items-center gap-x-2 leading-none text-core-secondary">
-            <h2 className={clsx('font-bold')}>allybenwich</h2>
-            <span className={clsx('text-sm')}>ally:)</span>
-          </div>
-          <div className="relative flex flex-col">
-            <p className="text-sm text-core-secondary-300">
-              pulchitudinous insanity. #fyp #fyp #poems #poetsoftiktok #originalpoem #original
-              #acting #skit #act
+    <main className="flex items-start justify-between py-6">
+      <section className="flex flex-col items-start gap-x-3 gap-y-2 sm:flex-row">
+        {/* User Avatar */}
+        <Link href={`/@${user?.username}`} className="outline-primary">
+          <ReactNiceAvatar
+            className={clsx(
+              'rounded-full border-[3px] border-white outline-4',
+              'h-14 w-14 shrink-0 shadow'
+            )}
+            {...myConfig}
+          />
+        </Link>
+        <div className="relative flex w-full max-w-lg flex-col space-y-1">
+          {/* User Information */}
+          <Link
+            href={`/@${user?.username}`}
+            className="group inline-flex items-center gap-x-2 leading-none text-core-secondary outline-primary"
+          >
+            <h2 className="font-bold group-hover:underline">{user?.username}</h2>
+            <p className="text-sm">
+              {user?.displayName} &bull; <small>{formatTimeDifference(post?.createdAt)}</small>
             </p>
-            <div className="relative h-[500px] w-full overflow-hidden rounded-2xl border-4 border-white shadow">
-              <Image
-                src="https://images.unsplash.com/photo-1689363199550-d0f417ed21db?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
-                fill={true}
-                className="shrink-0"
-                alt=""
-              />
+          </Link>
+          {/* User Post */}
+          <div className="flex flex-col space-y-1.5">
+            <div className="flex flex-wrap items-center space-x-1">
+              {convertHashtagsToLinks(post.title)}
+              {postHashtags?.map((item: { hashtag: { tag: string } }, index: number) => (
+                <Hashtag key={index} tag={item.hashtag.tag} />
+              ))}
             </div>
-            <div className="absolute -right-16 bottom-0 flex flex-col space-y-2">
-              {/* Heart Button */}
-              <div className="flex flex-col items-center space-y-1.5 text-xs text-core-secondary-300">
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="secondary-outline"
-                  className="h-[53px] w-[53px] rounded-full border-stroke-2 bg-section-1"
-                >
-                  <Heart fill="#586ca0" stroke="none" />
-                </Button>
-                <span className="text-xs font-medium">2.6M</span>
+            <div className="relative w-[355px] max-w-[355px] shrink-0">
+              <div
+                className={clsx(
+                  'flex h-[470px] items-center justify-center border-[5px] border-white',
+                  'overflow-hidden rounded-lg bg-black shadow'
+                )}
+              >
+                <Carousel>
+                  {mediaFiles?.map((asset, idx) => {
+                    if (asset.url.endsWith('.mp4')) {
+                      return (
+                        <video
+                          key={idx}
+                          src={asset.url}
+                          autoPlay
+                          muted
+                          loop
+                          className="w-full rounded-md"
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                      )
+                    } else {
+                      return (
+                        <Image
+                          key={idx}
+                          src={asset.url}
+                          width={500}
+                          height={470}
+                          placeholder="blur"
+                          className="z-50"
+                          blurDataURL={asset.url}
+                          alt=""
+                        />
+                      )
+                    }
+                  })}
+                </Carousel>
               </div>
-              {/* Message Button */}
-              <div className="flex flex-col items-center space-y-1.5 text-xs text-core-secondary-300">
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="secondary-outline"
-                  className="h-[53px] w-[53px] rounded-full border-stroke-2 bg-section-1 text-core-secondary-300"
-                >
-                  <MessageCircle className="h-5 w-5 fill-current" />
-                </Button>
-                <span className="text-xs font-medium">16.4K</span>
-              </div>
-              {/* Remarks Button */}
-              <div className="flex flex-col items-center space-y-1.5 text-xs text-core-secondary-300">
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="secondary-outline"
-                  className="h-[53px] w-[53px] rounded-full border-stroke-2 bg-section-1 text-core-secondary-300"
-                >
-                  <Bookmark fill="#586ca0" stroke="none" strokeLinecap="round" />
-                </Button>
-                <span className="text-xs font-medium">448.3K</span>
-              </div>
-              {/* Share Button */}
-              <div className="flex flex-col items-center space-y-1.5 text-xs text-core-secondary-300">
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="secondary-outline"
-                  className="h-[53px] w-[53px] rounded-full border-stroke-2 bg-section-1"
-                >
-                  <ShareTwo theme="filled" size={20} className="text-core-secondary-300" />
-                </Button>
-                <span className="text-xs font-medium">14.1K</span>
+              {/* Post Interaction Button */}
+              <div className="absolute -right-16 bottom-2 flex flex-col space-y-2">
+                {reactions.map((reaction, idx) => (
+                  <React.Fragment key={idx}>
+                    {reaction.type === Reaction.heart && (
+                      <ReactionButton count={reaction?.count}>
+                        <Heart fill="#586ca0" stroke="none" />
+                      </ReactionButton>
+                    )}
+                    {reaction.type === Reaction.comment && (
+                      <ReactionButton count={reaction.count}>
+                        <MessageCircle fill="#586ca0" className="h-5 w-5" />
+                      </ReactionButton>
+                    )}
+                    {reaction.type === Reaction.bookmark && (
+                      <ReactionButton count={reaction.count}>
+                        <Bookmark fill="#586ca0" stroke="none" strokeLinecap="round" />
+                      </ReactionButton>
+                    )}
+                    {reaction.type === Reaction.share && (
+                      <ReactionButton count={reaction.count}>
+                        <ShareTwo theme="filled" size={20} className="text-core-secondary-300" />
+                      </ReactionButton>
+                    )}
+                  </React.Fragment>
+                ))}
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div className="mt-2">
-        <Button type="button" variant="primary-outline" className="text-sm">
-          Follow
-        </Button>
-      </div>
-    </div>
+      </section>
+      {/* Follow Button */}
+      {!isAuthor && (
+        <section className="mt-2">
+          <Button
+            type="submit"
+            variant="primary"
+            className="px-3.5 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Follow
+          </Button>
+        </section>
+      )}
+    </main>
   )
 }
 
