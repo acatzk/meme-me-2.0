@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 
 import { PostList } from '~/components/post-list'

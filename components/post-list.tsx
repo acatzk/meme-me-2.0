@@ -14,7 +14,7 @@ export const PostList = (): JSX.Element => {
   const { ref, inView } = useInView()
 
   const currentUser = trpc.user.currentUser.useQuery()
-  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
     trpc.post.getAll.useInfiniteQuery(
       {
         limit: 5
@@ -40,13 +40,13 @@ export const PostList = (): JSX.Element => {
   }
 
   // Error message during fetch
-  if (isError && currentUser.isError) {
+  if (isError || currentUser.isError) {
     return (
       <div className="py-6">
         <Alert variant="destructive">
           <FileWarningIcon className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
-          <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
+          <AlertDescription>{error?.message}</AlertDescription>
         </Alert>
       </div>
     )
