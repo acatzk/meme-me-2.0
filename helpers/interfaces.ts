@@ -13,6 +13,7 @@ export interface IPost {
     displayName: string
     email: string
     username: string
+    imageUrl: string
   }
   postHashtags: {
     [x: string]: any
@@ -33,6 +34,7 @@ export interface IUser {
   email: string
   displayName: string
   username: string
+  imageUrl: string
   role: string
   _count: {
     followers: number

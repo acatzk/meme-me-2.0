@@ -4,23 +4,18 @@ import clsx from 'clsx'
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import dynamic from 'next/dynamic'
 import { ShareTwo } from '@icon-park/react'
-import { genConfig } from 'react-nice-avatar'
 import { Bookmark, Heart, MessageCircle } from 'lucide-react'
 
 import { IPost } from '~/helpers/interfaces'
 import { Button } from '~/components/ui/button'
 import { Reaction } from '~/helpers/emoji-helpers'
 import { formatTimeDifference } from '~/helpers/format-time-diff'
-import { defaultAvatarStyle } from '~/constant/default-avatar-style'
 import { convertHashtagsToLinks } from '~/helpers/convert-hashtags-to-link'
 
 import { Hashtag } from './hashtag'
 import { Carousel } from './carousel'
 import { ReactionButton } from './reaction-button'
-
-const ReactNiceAvatar = dynamic(async () => await import('react-nice-avatar'), { ssr: false })
 
 type PostProps = {
   post: IPost
@@ -28,8 +23,6 @@ type PostProps = {
 }
 
 export const Post = ({ post, isAuthor }: PostProps): JSX.Element => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  const myConfig = genConfig(defaultAvatarStyle as any)
   const user = post.user
   const mediaFiles = post.mediaFiles
   const postHashtags = post.postHashtags
@@ -58,12 +51,12 @@ export const Post = ({ post, isAuthor }: PostProps): JSX.Element => {
       <section className="flex flex-col items-start gap-x-3 gap-y-2 sm:flex-row">
         {/* User Avatar */}
         <Link href={`/@${user?.username}`} className="outline-primary">
-          <ReactNiceAvatar
-            className={clsx(
-              'rounded-full border-[3px] border-white outline-4',
-              'h-14 w-14 shrink-0 shadow'
-            )}
-            {...myConfig}
+          <Image
+            src={post.user?.imageUrl}
+            width={55}
+            height={55}
+            className="rounded-full border-[3px] border-white shadow outline-4"
+            alt="User Profile"
           />
         </Link>
         <div className="relative flex w-full max-w-lg flex-col space-y-1">

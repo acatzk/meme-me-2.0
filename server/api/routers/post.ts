@@ -63,7 +63,8 @@ export const postRouter = createTRPCRouter({
               id: true,
               displayName: true,
               email: true,
-              username: true
+              username: true,
+              imageUrl: true
             }
           },
           postHashtags: {
