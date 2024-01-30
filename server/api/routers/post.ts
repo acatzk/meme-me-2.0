@@ -110,6 +110,13 @@ export const postRouter = createTRPCRouter({
           user: {
             username: input.username
           }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        },
+        select: {
+          id: true,
+          mediaFiles: true
         }
       })
 
