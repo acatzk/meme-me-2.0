@@ -23,7 +23,7 @@ export default function ProfileLayout({ children }: ProfileLayoutProps): JSX.Ele
   const username = extractUsernameFromPath(pathname)
 
   const user = trpc.user.getUserByUsername.useQuery({
-    username: username!
+    username
   })
 
   const handleGoBackRoute = (): void => {
