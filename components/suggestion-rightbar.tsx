@@ -10,14 +10,27 @@ import { cn } from '~/lib/utils'
 import { useUpload } from '~/hooks/use-upload'
 import { Spinner } from '~/components/custom-icon/spinner'
 
+import { trpc } from '~/trpc/client'
 import { SearchField } from './search-field'
+import { IUser } from '~/helpers/interfaces'
 import { SuggestedUserList } from './suggested-user-list'
 import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 
 export const SuggestionRightBar = (): JSX.Element => {
   const upload = useUpload()
-  const isLoading = false
-  const isError = false
+  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    trpc.user.getSuggestedUsers.useInfiniteQuery(
+      {
+        limit: 4
+      },
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor
+      }
+    )
+
+  const suggestedUsers = data?.pages.reduce((acc: IUser[], page: any): IUser[] => {
+    return [...acc, ...page.users]
+  }, [])
 
   const businessLinks = [
     { label: 'About', href: '#' },
@@ -81,7 +94,14 @@ export const SuggestionRightBar = (): JSX.Element => {
               </Link>
             </header>
             {/* List of User */}
-            <SuggestedUserList />
+            <SuggestedUserList
+              {...{
+                users: suggestedUsers,
+                fetchNextPage,
+                hasNextPage,
+                isFetchingNextPage
+              }}
+            />
 
             <hr className="my-4" />
             <h2 className="text-sm font-bold text-core-secondary">Latest Post Activity</h2>

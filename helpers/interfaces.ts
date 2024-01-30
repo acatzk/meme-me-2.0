@@ -26,3 +26,17 @@ export interface IPostPage {
   nextCursor: number
   posts: IPost[]
 }
+
+export interface IUser {
+  id: number
+  externalId: string
+  email: string
+  displayName: string
+  username: string
+  role: string
+  _count: {
+    followers: number
+    following: number
+    posts: number
+  }
+}
