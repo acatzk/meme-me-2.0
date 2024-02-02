@@ -87,15 +87,15 @@ export default function ProfileLayout({ children }: ProfileLayoutProps): JSX.Ele
               </div>
               <div className="flex items-center space-x-4">
                 <a href="#" className="inline-flex items-center space-x-1 hover:underline">
-                  <h4 className="font-bold">0</h4>
+                  <h4 className="font-bold">{user?.data?._count.posts}</h4>
                   <span>posts</span>
                 </a>
                 <a href="#" className="inline-flex items-center space-x-1 hover:underline">
-                  <h4 className="font-bold">0</h4>
+                  <h4 className="font-bold">{user?.data?._count.followers}</h4>
                   <span>followers</span>
                 </a>
                 <a href="#" className="inline-flex items-center space-x-1 hover:underline">
-                  <h4 className="font-bold">0</h4>
+                  <h4 className="font-bold">{user?.data?._count.following}</h4>
                   <span>following</span>
                 </a>
               </div>

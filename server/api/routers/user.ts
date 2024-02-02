@@ -21,6 +21,19 @@ export const userRouter = createTRPCRouter({
       return await ctx.db.user.findUniqueOrThrow({
         where: {
           username: input.username
+        },
+        select: {
+          id: true,
+          displayName: true,
+          imageUrl: true,
+          username: true,
+          _count: {
+            select: {
+              posts: true,
+              followers: true,
+              following: true
+            }
+          }
         }
       })
     }),
