@@ -35,7 +35,7 @@ export const PostList = (): JSX.Element => {
   }, [inView])
 
   //   Loading style with Skeleton
-  if (isLoading && currentUser.isLoading) {
+  if (isLoading) {
     return <Post.Skeleton />
   }
 
