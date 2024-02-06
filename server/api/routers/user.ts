@@ -49,17 +49,19 @@ export const userRouter = createTRPCRouter({
       const { ctx, input } = opts
       const limit = input.limit ?? 15
       const { cursor } = input
+      const currentUserId = ctx.auth.userId
 
       const users = await ctx.db.user.findMany({
         take: limit + 1, // get an extra item at the end which we'll use as next cursor
         cursor: cursor ? { id: cursor } : undefined,
         where: {
-          externalId: {
-            not: ctx.auth.userId
-          }
+          NOT: { externalId: currentUserId }
         },
         orderBy: {
           createdAt: 'desc'
+        },
+        include: {
+          followers: true
         }
       })
 
@@ -69,8 +71,20 @@ export const userRouter = createTRPCRouter({
         nextCursor = nextItem!.id
       }
 
+      // Fetch followings of the current user
+      const currentFollowings = await ctx.db.follow.findMany({
+        where: { following: { externalId: currentUserId } },
+        select: { followerId: true }
+      })
+
+      // Map users and set isFollowed based on whether the current user follows each suggested user
+      const usersWithFollowStatus = users.map((user) => ({
+        ...user,
+        isFollowed: currentFollowings.some((follower) => follower.followerId === user.id)
+      }))
+
       return {
-        users,
+        users: usersWithFollowStatus,
         nextCursor
       }
     })

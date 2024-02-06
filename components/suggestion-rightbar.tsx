@@ -7,18 +7,22 @@ import { FileWarningIcon } from 'lucide-react'
 import { Remind, UploadOne } from '@icon-park/react'
 
 import { cn } from '~/lib/utils'
+import { trpc } from '~/trpc/client'
+import { IUser } from '~/helpers/interfaces'
 import { useUpload } from '~/hooks/use-upload'
 import { Spinner } from '~/components/custom-icon/spinner'
 
-import { trpc } from '~/trpc/client'
 import { SearchField } from './search-field'
-import { IUser } from '~/helpers/interfaces'
 import { SuggestedUserList } from './suggested-user-list'
 import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 
 export const SuggestionRightBar = (): JSX.Element => {
   const upload = useUpload()
-  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
+
+  const currentUser = trpc.user.currentUser.useQuery()
+  const authorId = Number(currentUser?.data?.id)
+
+  const { data, isError, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
     trpc.user.getSuggestedUsers.useInfiniteQuery(
       {
         limit: 4
@@ -99,7 +103,8 @@ export const SuggestionRightBar = (): JSX.Element => {
                 users: suggestedUsers,
                 fetchNextPage,
                 hasNextPage,
-                isFetchingNextPage
+                isFetchingNextPage,
+                authorId
               }}
             />
 

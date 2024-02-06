@@ -24,24 +24,24 @@ type SuggestedUserListProps = {
   >
   hasNextPage: boolean | undefined
   isFetchingNextPage: boolean
+  authorId: number
 }
 
 export const SuggestedUserList = (props: SuggestedUserListProps): JSX.Element => {
-  const { users, fetchNextPage, hasNextPage, isFetchingNextPage } = props
+  const { users, fetchNextPage, hasNextPage, isFetchingNextPage, authorId } = props
 
   return (
     <nav className="mt-5">
       <ul className="flex flex-col space-y-6">
-        {users?.map((user, index) => {
-          return (
-            <SuggestedUserItem
-              key={index}
-              {...{
-                user
-              }}
-            />
-          )
-        })}
+        {users?.map((user, index) => (
+          <SuggestedUserItem
+            key={index}
+            {...{
+              user,
+              authorId
+            }}
+          />
+        ))}
       </ul>
       {isFetchingNextPage ? (
         <div className="mt-5 flex justify-center">

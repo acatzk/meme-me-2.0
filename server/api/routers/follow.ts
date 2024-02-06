@@ -9,8 +9,9 @@ const UserRelation = z.object({
 })
 
 export const followRouter = createTRPCRouter({
-  follow: protectedProcedure.input(UserRelation).query(async ({ ctx, input }) => {
-    if (input.authorId === input.targetId) {
+  follow: protectedProcedure.input(UserRelation).mutation(async ({ ctx, input }) => {
+    const { authorId, targetId } = input
+    if (authorId === targetId) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
         message: 'You cannot follow yourself.'
@@ -18,7 +19,7 @@ export const followRouter = createTRPCRouter({
     }
 
     const targetUserFound = await ctx.db.user.findUnique({
-      where: { id: input.targetId }
+      where: { id: targetId }
     })
 
     if (!targetUserFound) {
@@ -28,28 +29,44 @@ export const followRouter = createTRPCRouter({
       })
     }
 
-    return await ctx.db.follow.create({
-      data: {
-        follower: {
-          connect: {
-            id: input.targetId
-          }
-        },
-        following: {
-          connect: {
-            id: input.authorId
+    // Check if already following
+    const existingFollow = await ctx.db.follow.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId: authorId,
+          followingId: targetId
+        }
+      }
+    })
+
+    if (existingFollow) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'You are already following this user.'
+      })
+    }
+
+    return await ctx.db.$transaction(async (db) => {
+      await ctx.db.follow.create({
+        data: {
+          follower: {
+            connect: {
+              id: targetId
+            }
+          },
+          following: {
+            connect: {
+              id: authorId
+            }
           }
         }
-      },
-      include: {
-        follower: true,
-        following: true
-      }
+      })
     })
   }),
 
-  unfollow: protectedProcedure.input(UserRelation).query(async ({ ctx, input }) => {
-    if (input.authorId === input.targetId) {
+  unfollow: protectedProcedure.input(UserRelation).mutation(async ({ ctx, input }) => {
+    const { authorId, targetId } = input
+    if (authorId === targetId) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
         message: 'You cannot follow yourself.'
@@ -57,7 +74,7 @@ export const followRouter = createTRPCRouter({
     }
 
     const targetUserFound = await ctx.db.user.findUnique({
-      where: { id: input.targetId }
+      where: { id: targetId }
     })
 
     if (!targetUserFound) {
@@ -67,30 +84,33 @@ export const followRouter = createTRPCRouter({
       })
     }
 
-    return await ctx.db.follow.delete({
+    // Check if already unfollowed
+    const existingFollow = await ctx.db.follow.findUnique({
       where: {
         followerId_followingId: {
-          followerId: input.targetId,
-          followingId: input.authorId
-        }
-      },
-      include: {
-        follower: true,
-        following: true
-      }
-    })
-  }),
-
-  checkUserFollowed: protectedProcedure.input(UserRelation).query(({ ctx, input }) => {
-    const followRelationship = ctx.db.follow.findUnique({
-      where: {
-        followerId_followingId: {
-          followerId: input.targetId,
-          followingId: input.authorId
+          followerId: targetId,
+          followingId: authorId
         }
       }
     })
 
-    return !!followRelationship
+    if (!existingFollow) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'You are not following this user.'
+      })
+    }
+
+    // Start a transaction
+    return await ctx.db.$transaction(async (db) => {
+      await db.follow.delete({
+        where: {
+          followerId_followingId: {
+            followerId: targetId,
+            followingId: authorId
+          }
+        }
+      })
+    })
   })
 })

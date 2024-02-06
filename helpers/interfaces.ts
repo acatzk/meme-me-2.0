@@ -41,4 +41,11 @@ export interface IUser {
     following: number
     posts: number
   }
+  isFollowed: boolean
+  followers: Array<{
+    id: number
+    followerId: number
+    followingId: number
+    createdAt: Date
+  }>
 }

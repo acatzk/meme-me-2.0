@@ -24,7 +24,7 @@ const buttonVariants = cva(
         ),
         secondary: cn(),
         'secondary-outline': cn(
-          'text-secondary border stroke-1 bg-transparent focus:ring-4 focus:ring-core-100',
+          'text-core-secondary border stroke-1 bg-transparent focus:ring-4 focus:ring-core-100',
           'focus:border focus:border-secondary-100'
         )
       },
