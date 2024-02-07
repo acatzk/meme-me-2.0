@@ -7,6 +7,8 @@ import { FileWarningIcon } from 'lucide-react'
 import { Remind, UploadOne } from '@icon-park/react'
 
 import { cn } from '~/lib/utils'
+import { trpc } from '~/trpc/client'
+import { IUser } from '~/helpers/interfaces'
 import { useUpload } from '~/hooks/use-upload'
 import { Spinner } from '~/components/custom-icon/spinner'
 
@@ -16,8 +18,23 @@ import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 
 export const SuggestionRightBar = (): JSX.Element => {
   const upload = useUpload()
-  const isLoading = false
-  const isError = false
+
+  const currentUser = trpc.user.currentUser.useQuery()
+  const authorId = Number(currentUser?.data?.id)
+
+  const { data, isError, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    trpc.user.getSuggestedUsers.useInfiniteQuery(
+      {
+        limit: 4
+      },
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor
+      }
+    )
+
+  const suggestedUsers = data?.pages.reduce((acc: IUser[], page: any): IUser[] => {
+    return [...acc, ...page.users]
+  }, [])
 
   const businessLinks = [
     { label: 'About', href: '#' },
@@ -81,7 +98,15 @@ export const SuggestionRightBar = (): JSX.Element => {
               </Link>
             </header>
             {/* List of User */}
-            <SuggestedUserList />
+            <SuggestedUserList
+              {...{
+                users: suggestedUsers,
+                fetchNextPage,
+                hasNextPage,
+                isFetchingNextPage,
+                authorId
+              }}
+            />
 
             <hr className="my-4" />
             <h2 className="text-sm font-bold text-core-secondary">Latest Post Activity</h2>

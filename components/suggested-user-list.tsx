@@ -1,43 +1,67 @@
-import Link from 'next/link'
-import React, { FC } from 'react'
+import React from 'react'
+import { FetchNextPageOptions, InfiniteQueryObserverResult } from '@tanstack/react-query'
 
-import { dummySuggestedUsers } from '~/constant/dummy-suggested-users'
+import { IUser } from '~/helpers/interfaces'
+import { Spinner } from '~/components/custom-icon/spinner'
+import { SuggestedUserItem } from '~/components/suggested-user-item'
 
-import { Button } from './ui/button'
-import { UserDetails } from './user-details'
+type SuggestedUserListProps = {
+  users: IUser[] | undefined
+  fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<
+    InfiniteQueryObserverResult<{
+      users: Array<{
+        id: number
+        externalId: string
+        username: string
+        email: string
+        displayName: string
+        imageUrl: string
+        createdAt: Date
+        updatedAt: Date
+      }>
+      nextCursor: number | undefined
+    }>
+  >
+  hasNextPage: boolean | undefined
+  isFetchingNextPage: boolean
+  authorId: number
+}
 
-type SuggestedUserListProps = Record<string, unknown>
+export const SuggestedUserList = (props: SuggestedUserListProps): JSX.Element => {
+  const { users, fetchNextPage, hasNextPage, isFetchingNextPage, authorId } = props
 
-export const SuggestedUserList: FC<SuggestedUserListProps> = (): JSX.Element => {
   return (
     <nav className="mt-5">
       <ul className="flex flex-col space-y-6">
-        {dummySuggestedUsers.map((item) => (
-          <li key={item.id} className="flex items-center justify-between">
-            <UserDetails
-              {...{
-                avatar: item.avatar,
-                name: item.name,
-                username: item.username,
-                size: 'sm'
-              }}
-            />
-            <Button
-              type="button"
-              variant={item.isFollowed ? 'primary-outline' : 'primary'}
-              className="w-20 text-xs font-semibold"
-              size="xs"
-            >
-              {item.isFollowed ? 'Unfollow' : 'Follow'}
-            </Button>
-          </li>
+        {users?.map((user, index) => (
+          <SuggestedUserItem
+            key={index}
+            {...{
+              user,
+              authorId
+            }}
+          />
         ))}
       </ul>
-      <div className="mt-4 text-center">
-        <Link href="#" className="text-xs font-medium text-core-secondary-200 hover:underline">
-          Show more
-        </Link>
-      </div>
+      {isFetchingNextPage ? (
+        <div className="mt-5 flex justify-center">
+          <Spinner size="lg" />
+        </div>
+      ) : null}
+
+      {!isFetchingNextPage && hasNextPage! && (
+        <div className="mt-4 text-center">
+          <span
+            role="button"
+            onClick={() => {
+              void fetchNextPage()
+            }}
+            className="cursor-pointer text-xs font-medium text-core-secondary-200 hover:underline"
+          >
+            Show more
+          </span>
+        </div>
+      )}
     </nav>
   )
 }
